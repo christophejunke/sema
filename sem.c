@@ -6,7 +6,7 @@
 
 typedef struct context_s {
 	sem_t checkpoint;
-	sem_t tick;
+	sem_t wake_up;
 } context_t;
 
 void perr (char* label, int value)
@@ -41,8 +41,8 @@ void* controller_handler (void* data)
 	sem_wait(&(context->checkpoint));
 	sem_wait(&(context->checkpoint));
 	info("waking up");
-	sem_post(&(context->tick));
-	sem_post(&(context->tick));
+	sem_post(&(context->wake_up));
+	sem_post(&(context->wake_up));
 	pend("controller");
 	return NULL;
 }
@@ -54,7 +54,7 @@ void* task1_handler (void* data)
 	usleep(200);
 	info("[t1] ready");
 	sem_post(&(context->checkpoint));
-	sem_wait(&(context->tick));
+	sem_wait(&(context->wake_up));
 	info("[t1] race!");
 	pend("task1_handler");
 	return NULL;
@@ -67,7 +67,7 @@ void* task2_handler (void* data)
 	usleep(200);
 	info("[t2] ready");
 	sem_post(&(context->checkpoint));
-	sem_wait(&(context->tick));
+	sem_wait(&(context->wake_up));
 	info("[t2] race!");
 	pend("task2_handler");
 	return NULL;
@@ -79,7 +79,7 @@ int main(void)
 	context_t context;
 
 	perr("checkpoint_init", sem_init(&(context.checkpoint), 0, 0));
-	perr("tick_init", sem_init(&(context.tick), 0, 0));
+	perr("wake_up_init", sem_init(&(context.wake_up), 0, 0));
 	pthread_t controller;
 	perr("pthread_create controller",
 	     pthread_create(&controller, NULL, controller_handler, &context));
@@ -97,7 +97,7 @@ int main(void)
 	pthread_join(task2, NULL);
 
 	perr("destroy_checkpoint", sem_destroy(&(context.checkpoint)));
-	perr("destroy_tick", sem_destroy(&(context.tick)));
+	perr("destroy_wake_up", sem_destroy(&(context.wake_up)));
 
 	pend("main");
 	return 0;
