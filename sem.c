@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-sem_t checkpoint;
-sem_t tick;
 
 pthread_t controller;
 pthread_t task1;
 pthread_t task2;
+static sem_t checkpoint;
+static sem_t tick;
 
 void perr (char* label, int value)
 {
