@@ -1,3 +1,5 @@
+.PHONY: c.out
+
 c.out: sem
 	./sem > $@
 
