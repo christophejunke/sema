@@ -20,10 +20,10 @@
   (declare (ignore args))
   (error "Not inside with-info."))
 
-(defun controller (*standard-output* check-point wake-up)
+(defun controller (nb-threads *standard-output* check-point wake-up)
   (with-info (:controller)
-    (info :synchronize (wait-on-semaphore check-point :n 2))
-    (info :wake        (signal-semaphore wake-up 2))
+    (info :synchronize (wait-on-semaphore check-point :n nb-threads))
+    (info :wake        (signal-semaphore wake-up nb-threads))
     (info :done)))
 
 (defun task (time)
@@ -40,11 +40,15 @@
                          (make-semaphore :name "wake-up"))))
     (flet ((thread (name function)
              (make-thread function :name name :arguments arguments)))
-      (map ()
-           #'join-thread
-           (list (thread "seam/control" 'controller)
-                 (thread "sema/task-1" (task (float 3/100)))
-                 (thread "sema/task-2" (task (float 2/100))))))))
+      (let ((threads
+              (list (thread "sema/task-1" (task (float 3/100)))
+                    (thread "sema/task-2" (task (float 2/100))))))
+        (map ()
+             #'join-thread
+             (list* (make-thread #'controller
+                                 :name "seam/control"
+                                 :arguments (list* (length threads) arguments))
+                    threads))))))
 
 
 (with-open-file (*standard-output* #P"/home/chris/src/sema/lisp.out"
