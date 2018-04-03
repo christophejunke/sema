@@ -1,3 +1,6 @@
+c.out: sem
+	./sem > $@
+
 test: sem
 	./sem
 

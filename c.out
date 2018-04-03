@@ -1,0 +1,22 @@
+./sem
+Start main
+checkpoint_init: 0
+tick_init: 0
+pthread_create controller: 0
+Start controller
+Start task1_handler
+pthread_create task1: 0
+waiting all
+pthread_create task2: 0
+Start task2_handler
+[t1] ready
+[t2] ready
+waking up
+End controller
+[t1] race!
+End task1_handler
+[t2] race!
+End task2_handler
+destroy_checkpoint: 0
+destroy_tick: 0
+End main

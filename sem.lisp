@@ -22,8 +22,8 @@
 
 (defun controller (*standard-output* check-point wake-up)
   (with-info (:controller)
-    (info :sync (wait-on-semaphore check-point :n 2))
-    (info :wake (signal-semaphore wake-up 2))
+    (info :synchronize (wait-on-semaphore check-point :n 2))
+    (info :wake        (signal-semaphore wake-up 2))
     (info :done)))
 
 (defun task (time)
@@ -35,9 +35,6 @@
       (info :done))))
 
 (defun main ()
-  (fresh-line)
-  (terpri)
-  (terpri)
   (let ((arguments (list *standard-output*
                          (make-semaphore :name "check-point")
                          (make-semaphore :name "wake-up"))))
@@ -49,4 +46,8 @@
                  (thread "sema/task-1" (task (float 3/100)))
                  (thread "sema/task-2" (task (float 2/100))))))))
 
-(main)
+
+(with-open-file (*standard-output* #P"/home/chris/src/sema/lisp.out"
+                                   :direction :output
+                                   :if-exists :supersede)
+  (main))
