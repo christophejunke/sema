@@ -69,15 +69,15 @@ int main(void)
 	perr("checkpoint_init", sem_init(&checkpoint, 0, 0));
 	perr("tick_init", sem_init(&tick, 0, 0));
 
-	const pthread_t controller;
+	pthread_t controller;
 	perr("pthread_create controller",
 	     pthread_create(&controller, NULL, controller_handler, NULL));
 
-	const pthread_t task1;
+	pthread_t task1;
 	perr("pthread_create task1",
 	     pthread_create(&task1, NULL, task1_handler, NULL));
 
-	const pthread_t task2;
+	pthread_t task2;
 	perr("pthread_create task2",
 	     pthread_create(&task2, NULL, task2_handler, NULL));
 
