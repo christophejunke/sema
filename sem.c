@@ -18,6 +18,11 @@ void perr (char* label, int value)
 	}
 }
 
+void info(char* text)
+{
+	printf("%s\n", text);
+}
+
 void pstart(char* label)
 {
 	printf("Start %s\n", label);
@@ -32,10 +37,10 @@ void* controller_handler (void* data)
 {
 	context_t* context = data;
 	pstart("controller");
-	printf("waiting all\n");
-	printf("waking up\n");
+	info("waiting all");
 	sem_wait(&(context->checkpoint));
 	sem_wait(&(context->checkpoint));
+	info("waking up");
 	sem_post(&(context->tick));
 	sem_post(&(context->tick));
 	pend("controller");
@@ -47,10 +52,10 @@ void* task1_handler (void* data)
 	context_t* context = data;
 	pstart("task1_handler");
 	usleep(200);
-	printf("[t1] ready\n");
-	printf("[t1] race!\n");
+	info("[t1] ready");
 	sem_post(&(context->checkpoint));
 	sem_wait(&(context->tick));
+	info("[t1] race!");
 	pend("task1_handler");
 	return NULL;
 }
@@ -60,10 +65,10 @@ void* task2_handler (void* data)
 	context_t* context = data;
 	pstart("task2_handler");
 	usleep(200);
-	printf("[t2] ready\n");
-	printf("[t2] race!\n");
+	info("[t2] ready");
 	sem_post(&(context->checkpoint));
 	sem_wait(&(context->tick));
+	info("[t2] race!");
 	pend("task2_handler");
 	return NULL;
 }
