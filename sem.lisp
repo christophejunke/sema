@@ -55,7 +55,7 @@
                                                               arguments))
                                threads))))
 
-(with-open-file (*standard-output* #P"/home/chris/src/sema/lisp.out"
+(with-open-file (*standard-output* #P"lisp.out"
                                    :direction :output
                                    :if-exists :supersede)
   (main))
